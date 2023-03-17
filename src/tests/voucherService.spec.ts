@@ -5,7 +5,7 @@ import voucherService from "services/voucherService";
 
 describe("voucherService test suite", () => {
 
-  it("voucher code must be unique", () => {
+  it("should not create a voucher with repeat code", () => {
     const voucher = {
       code: "AB1",
       discount: 10
@@ -26,6 +26,26 @@ describe("voucherService test suite", () => {
       type: "conflict"
     });
 
+  });
+
+  it("should not apply discount for invalid voucher", () => {
+    const voucher = {
+      id: 1,
+      code: "AaaA11",
+      discount: 50,
+      used: false,
+    }
+
+    jest.spyOn(voucherRepository, "getVoucherByCode").mockImplementationOnce((): any => {
+      return undefined;
+    });
+
+    const amount = 101;
+    const promise = voucherService.applyVoucher(voucher.code, amount);
+    expect(promise).rejects.toEqual({
+      message: "Voucher does not exist.",
+      type: "conflict"
+    });
   });
 
 });
