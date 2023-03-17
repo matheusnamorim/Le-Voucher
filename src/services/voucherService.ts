@@ -29,8 +29,6 @@ async function applyVoucher(code: string, amount: number) {
   if (isAmountValidForDiscount(amount) && !voucher.used) {
     await changeVoucherToUsed(code);
     finalAmount = applyDiscount(amount, voucher.discount);
-  }else{
-    throw conflictError("Voucher has already been used.")
   }
 
   return {

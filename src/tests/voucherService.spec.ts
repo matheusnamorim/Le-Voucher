@@ -46,7 +46,7 @@ describe("voucherService test suite", () => {
     });
   });
 
-  it("should not apply discount for a voucher used", () => {
+  it("should not apply discount for a voucher used", async () => {
     const voucher = {
       code: "AabA121",
       discount: 20,
@@ -62,12 +62,12 @@ describe("voucherService test suite", () => {
     });
 
     const amount = 101;
-    const promise = voucherService.applyVoucher(voucher.code, amount);
-    expect(promise).rejects.toEqual({
-      message: "Voucher has already been used.",
-      type: "conflict"
+    const order = await voucherService.applyVoucher(voucher.code, amount);
+    expect(order).toEqual({
+      amount: amount,
+      discount: voucher.discount,
+      finalAmount: amount, 
+      applied: false
     });
-    
   });
-
 });
