@@ -1,9 +1,22 @@
 import { jest } from "@jest/globals";
-import { validateSchemaMiddleware } from "middlewares/validateSchemaMiddleware";
 import voucherRepository from "repositories/voucherRepository";
 import voucherService from "services/voucherService";
 
 describe("voucherService test suite", () => {
+
+  it("should create a voucher when is values valid", () => {
+    const voucher = {
+      code: "aaaavvvvA1",
+      discount: 10
+    }
+
+    jest.spyOn(voucherRepository, "getVoucherByCode").mockImplementationOnce((): any => {
+      return undefined;
+    });
+
+    voucherService.createVoucher(voucher.code, voucher.discount);
+
+  });
 
   it("should not create a voucher with repeat code", () => {
     const voucher = {
@@ -71,7 +84,7 @@ describe("voucherService test suite", () => {
     });
   });
 
-  it("should not apply discount for values bellow 100", async () => {
+  it("should not apply discount for values below 100", async () => {
     const voucher = {
       code: "AtA01",
       discount: 90
