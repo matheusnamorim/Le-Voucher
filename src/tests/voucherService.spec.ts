@@ -111,4 +111,30 @@ describe("voucherService test suite", () => {
     });
 
   });
+
+  it("should apply a voucher when values is valid", async () => {
+    const voucher = {
+      code: "bac1010",
+      discount: 90
+    }
+
+    jest.spyOn(voucherRepository, "getVoucherByCode").mockImplementationOnce((): any => {
+      return {
+        id: 1,
+        code: voucher.code,
+        discount: voucher.discount,
+        used: false,
+      }
+    });
+
+    const amount = 200;
+    const order = await voucherService.applyVoucher(voucher.code, amount);
+    expect(order).toEqual({
+      amount: amount,
+      discount: voucher.discount,
+      finalAmount: amount - (amount * ( voucher.discount / 100)), 
+      applied: true
+    });
+
+  });
 });
