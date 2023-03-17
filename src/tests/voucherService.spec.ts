@@ -30,10 +30,8 @@ describe("voucherService test suite", () => {
 
   it("should not apply discount for invalid voucher", () => {
     const voucher = {
-      id: 1,
       code: "AaaA11",
       discount: 50,
-      used: false,
     }
 
     jest.spyOn(voucherRepository, "getVoucherByCode").mockImplementationOnce((): any => {
@@ -46,6 +44,30 @@ describe("voucherService test suite", () => {
       message: "Voucher does not exist.",
       type: "conflict"
     });
+  });
+
+  it("should not apply discount for a voucher used", () => {
+    const voucher = {
+      code: "AabA121",
+      discount: 20,
+    }
+
+    jest.spyOn(voucherRepository, "getVoucherByCode").mockImplementationOnce((): any => {
+      return {
+        id: 1,
+        code: voucher.code,
+        discount: voucher.discount,
+        used: true,
+      }
+    });
+
+    const amount = 101;
+    const promise = voucherService.applyVoucher(voucher.code, amount);
+    expect(promise).rejects.toEqual({
+      message: "Voucher has already been used.",
+      type: "conflict"
+    });
+    
   });
 
 });
