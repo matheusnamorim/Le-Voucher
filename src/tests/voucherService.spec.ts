@@ -70,4 +70,32 @@ describe("voucherService test suite", () => {
       applied: false
     });
   });
+
+  it("should not apply discount for values bellow 100", async () => {
+    const voucher = {
+      code: "AtA01",
+      discount: 90
+    }
+
+    jest.spyOn(voucherRepository, "getVoucherByCode").mockImplementationOnce((): any => {
+      return {
+        id: 1,
+        code: voucher.code,
+        discount: voucher.discount,
+        used: false,
+      }
+    });
+
+    jest.spyOn(voucherRepository, "useVoucher").mockImplementationOnce((): any => {});
+
+    const amount = 99;
+    const order = await voucherService.applyVoucher(voucher.code, amount);
+    expect(order).toEqual({
+      amount: amount,
+      discount: voucher.discount,
+      finalAmount: amount, 
+      applied: false
+    });
+
+  });
 });
